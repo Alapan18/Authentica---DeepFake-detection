@@ -139,4 +139,4 @@ python app.py
 <br>
 
 
-<center><font size="40">THANK YOU</font></center>
+<p align= "center"><font size="40">THANK YOU</font></p>
