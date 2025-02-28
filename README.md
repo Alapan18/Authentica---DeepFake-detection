@@ -8,12 +8,12 @@ A **multimodal deepfake detection system** leveraging **CNN-LSTM for video analy
 ```bash
 │
 ├───audio final
-│       scaler.pkl
-│       svm_model.pkl
-│       train_test_audio.py
+│   ├───scaler.pkl
+│   ├───svm_model.pkl
+│   └───train_test_audio.py
 ├───video final
-│        predict.ipynb
-│       test.ipynb
+│   ├───predict.ipynb
+│   └───test.ipynb
 ├───flask_app
 │   ├───app.py
 │   ├───scaler.pkl
@@ -26,7 +26,7 @@ A **multimodal deepfake detection system** leveraging **CNN-LSTM for video analy
 │   │           stylesdeepfake.css
 │   ├───templates
 │   │   ├───index.html
-│   │       web.html
+│   │   └───web.html
 │   └───video
 ├───testcases
 ├───README.md
