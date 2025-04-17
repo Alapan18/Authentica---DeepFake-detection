@@ -68,6 +68,7 @@ A **multimodal deepfake detection system** leveraging **CNN-LSTM for video analy
  - DFDC dataset: https://www.kaggle.com/c/deepfake-detection-challenge/data
  - Face Forensics++: https://www.kaggle.com/datasets/hungle3401/faceforensics
  - Face Forensics: https://github.com/ondyari/FaceForensics
+ - FOR dataset: https://www.kaggle.com/datasets/mohammedabdeldayem/the-fake-or-real-dataset/code?datasetId=4555568
 
 ## ⚙️ Pretrained video model
 
