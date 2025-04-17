@@ -39,8 +39,7 @@ A **multimodal deepfake detection system** leveraging **CNN-LSTM for video analy
 ```
 
 ### 🔊 **`audio_final/`**  
-📌 Contains the **training and prediction code** for **audio deepfake detection** using **MFCC feature extraction and an SVM classifier**.  
-📌 Includes **pretrained audio models** trained on a **custom dataset** for detecting synthesized speech.  
+📌 Contains the **training and prediction code** for **audio deepfake detection** using **MFCC feature extraction and scaling with XGBoost classifier ** and **Mel-Spectogram genaration and normalization with CNN classifier**.  
 
 ### 🎥 **`video_final/`**  
 📌 Contains the **training and prediction code** for **video-based deepfake detection** using a **CNN-LSTM architecture**.  
