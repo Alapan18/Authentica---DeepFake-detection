@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo site</title>
+    <style>
+        :root {
+            --primary-color: #1877f2;
+            /* Facebook blue */
+            --secondary-color: #ffffff;
+            --sidebar-bg: #f0f2f5;
+            --header-bg: #ffffff;
+            --text-color: #050505;
+            --hover-color: #e4e6eb;
+            --danger-color: #ff4444;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        header {
+            background-color: var(--header-bg);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            max-width: 600px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .main-container {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: var(--sidebar-bg);
+            height: calc(100vh - 60px);
+            padding: 20px 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            padding: 0 20px;
+            font-size: 16px;
+            color: #65676b;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-item {
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .sidebar-item i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            /* 16:9 Aspect Ratio */
+            background-color: #000;
+        }
+
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-options {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+
+        body.dark-mode {
+            background-color: #18191a;
+            /* Dark background */
+            color: #e4e6eb;
+            /* Light text color */
+        }
+
+        header.dark-mode {
+            background-color: #242526;
+            /* Dark header background */
+        }
+
+        .sidebar.dark-mode {
+            background-color: #242526;
+            /* Dark sidebar background */
+        }
+
+        .sidebar-item.dark-mode:hover {
+            background-color: #3a3b3c;
+            /* Hover effect for dark mode */
+        }
+
+        .content.dark-mode {
+            background-color: #18191a;
+            /* Dark content background */
+        }
+
+        .prediction-result.dark-mode {
+            background-color: #242526;
+            /* Dark prediction result background */
+            border-color: #3a3b3c;
+            /* Border color for dark mode */
+        }
+
+        .options-menu.dark-mode {
+            background-color: #242526;
+            /* Dark options menu background */
+            color: #e4e6eb;
+            /* Light text color */
+        }
+
+        .options-menu.dark-mode .option-item:hover {
+            background-color: #3a3b3c;
+            /* Hover effect for options menu in dark mode */
+        }
+
+        .options-btn {
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-menu {
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .options-menu.show {
+            display: block;
+        }
+
+        .option-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .option-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .option-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .option-item.report {
+            color: var(--danger-color);
+        }
+
+        .video-controls {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .file-input {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .file-input label {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .file-input input {
+            display: none;
+        }
+
+        .video-info {
+            margin-top: 20px;
+        }
+
+        .video-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .prediction-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        /* Add this new style for the loading indicator */
+        .loading {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">I_Love_Videos</div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search">
+        </div>
+        <div class="user-actions">
+            <i>👤</i>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-item">
+                    <i>🏠</i> Home
+                </div>
+                <div class="sidebar-item">
+                    <i>🔍</i> Explore
+                </div>
+                <div class="sidebar-item">
+                    <i>📺</i> Subscriptions
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>You</h3>
+                <div class="sidebar-item">
+                    <i>🕒</i> History
+                </div>
+                <div class="sidebar-item">
+                    <i>📋</i> Playlists
+                </div>
+                <div class="sidebar-item">
+                    <i>🎬</i> Your videos
+                </div>
+                <div class="sidebar-item">
+                    <i>🎓</i> Your courses
+                </div>
+                <div class="sidebar-item">
+                    <i>👀</i> Watch Later
+                </div>
+                <div class="sidebar-item">
+                    <i>🏷️</i> Liked videos
+                </div>
+                <div class="sidebar-item">
+                    <i>✂️</i> Your clips
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Subscriptions</h3>
+                <div class="sidebar-item">
+                    <i>🎵</i> Brilliant Classics
+                </div>
+                <div class="sidebar-item">
+                    <i>🔥</i> Jet Burn
+                </div>
+                <div class="sidebar-item">
+                    <i>🚀</i> NASASpaceflight
+                </div>
+                <div class="sidebar-item">
+                    <i>🌍</i> GeoskamTemblRT
+                </div>
+                <div class="sidebar-item">
+                    <i>📚</i> Vodama JEE
+                </div>
+                <div class="sidebar-item">
+                    <i>🛠️</i> ZvStegwood
+                </div>
+                <div class="sidebar-item">
+                    <i>🎮</i> 2CELUS6
+                </div>
+                <div class="sidebar-item">
+                    <i>⋯</i> Show more
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Explore</h3>
+                <div class="sidebar-item">
+                    <i>📈</i> Trending
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="video-container">
+                <form id="upload-form" method="POST" enctype="multipart/form-data" action="/">
+                    <div class="video-wrapper">
+                        <video id="video-player" controls></video>
+                        <div class="video-options">
+                            <button class="options-btn" id="options-btn" type="button">⋯</button>
+                            <div class="options-menu" id="options-menu">
+                                <div class="option-item">
+                                    <i>📋</i> Copy URL
+                                </div>
+                                <div class="option-item">
+                                    <i>↗️</i> Share
+                                </div>
+                                <div class="option-item">
+                                    <i>💾</i> Save
+                                </div>
+                                <div class="option-item report" id="report-btn">
+                                    <i>⚠️</i> Report & Analyze
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="file-input">
+                        <label for="video">Choose Video File</label>
+                        <input type="file" id="video" name="video" accept="video/*">
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">Your Video</div>
+                        <div class="video-description">Upload a video file to analyze it</div>
+                    </div>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Processing video...</p>
+                    </div>
+                </form>
+                {% if prediction %}
+                <div class="prediction-result">
+                    <h3>Analysis Result:</h3>
+                    <p>{{ prediction }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const videoUpload = document.getElementById('video');
+                const videoPlayer = document.getElementById('video-player');
+                const optionsBtn = document.getElementById('options-btn');
+                const optionsMenu = document.getElementById('options-menu');
+                const reportBtn = document.getElementById('report-btn');
+                const uploadForm = document.getElementById('upload-form');
+                const loadingIndicator = document.getElementById('loading');
+                const logo = document.querySelector('.logo');
+
+                // Toggle options menu
+                optionsBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    optionsMenu.classList.toggle('show');
+                });
+
+                // Close menu when clicking elsewhere
+                document.addEventListener('click', function () {
+                    optionsMenu.classList.remove('show');
+                });
+
+                // Prevent menu from closing when clicking inside it
+                optionsMenu.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+
+                // Handle menu options (except report)
+                const optionItems = document.querySelectorAll('.option-item:not(.report)');
+                optionItems.forEach(item => {
+                    item.addEventListener('click', function () {
+                        const action = this.textContent.trim();
+                        alert(`Action: ${action}`);
+                        optionsMenu.classList.remove('show');
+                    });
+                });
+
+                // Handle video selection
+                videoUpload.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const videoURL = URL.createObjectURL(file);
+                        videoPlayer.src = videoURL;
+
+                        // Update video info
+                        document.querySelector('.video-title').textContent = file.name;
+                        document.querySelector('.video-description').textContent =
+                            `Type: ${file.type} | Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+                        // Auto-play the video
+                        videoPlayer.play();
+                    }
+                });
+
+                // Handle report button click - now handles both upload and analysis
+                reportBtn.addEventListener('click', function () {
+                    if (!videoUpload.files || videoUpload.files.length === 0) {
+                        alert('Please select a video file first');
+                        return;
+                    }
+
+                    // Show loading indicator
+                    loadingIndicator.style.display = 'block';
+
+                    // Submit the form with analyze action
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'action';
+                    hiddenInput.value = 'analyze';
+                    uploadForm.appendChild(hiddenInput);
+
+                    uploadForm.submit();
+
+                    // Close the menu
+                    optionsMenu.classList.remove('show');
+                });
+
+                // Toggle dark mode
+                logo.addEventListener('click', function () {
+                    document.body.classList.toggle('dark-mode');
+                    document.querySelector('header').classList.toggle('dark-mode');
+                    document.querySelector('.sidebar').classList.toggle('dark-mode');
+                    document.querySelector('.content').classList.toggle('dark-mode');
+                    const predictionResult = document.querySelector('.prediction-result');
+                    if (predictionResult) {
+                        predictionResult.classList.toggle('dark-mode');
+                    }
+                    const optionsMenu = document.querySelector('.options-menu');
+                    if (optionsMenu) {
+                        optionsMenu.classList.toggle('dark-mode');
+                    }
+                });
+                // Simulate YouTube's dark mode toggle (optional)
+                document.querySelector('.logo').addEventListener('click', function () {
+                    document.body.classList.toggle('dark-mode');
+                });
+            });
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+Total videos processed: 1/nTotal frames extracted: 168/nCombined lip frames shape: (168, 3, 64, 64)/nCombined audio spectrograms shape: (168, 128, 7)/n/nSource videos:/n1. C:/Users/alapa/Downloads/Authentica---DeepFake-detection/lipsync/videos\WhatsApp Video 2025-04-21 at 22.54.57_d02347e4.mp4/n

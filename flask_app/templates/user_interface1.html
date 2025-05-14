@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Video Shorts</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0f0f0f;
+            color: white;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 240px;
+            background-color: #0f0f0f;
+            padding: 10px 0;
+            overflow-y: auto;
+            height: 100%;
+            border-right: 1px solid #272727;
+        }
+
+        .logo {
+            padding: 10px 20px;
+            font-size: 20px;
+            color: #f00;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .logo i {
+            margin-right: 10px;
+        }
+
+        .sidebar-items {
+            padding: 0 10px;
+        }
+
+        .sidebar-item {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-item i {
+            margin-right: 20px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-item:hover {
+            background-color: #272727;
+        }
+
+        .sidebar-item.selected {
+            background-color: #272727;
+        }
+
+        .sidebar-header {
+            padding: 15px 10px 5px;
+            font-size: 16px;
+            font-weight: 500;
+            border-top: 1px solid #272727;
+            margin-top: 10px;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Shorts container */
+        .shorts-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            position: relative;
+        }
+
+        /* Individual short */
+        .short {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            scroll-snap-align: start;
+        }
+
+        .video-container {
+            position: relative;
+            width: 75vh;  /* 4:3 aspect ratio based on height */
+            height: calc(75vh * 0.75);  /* 4:3 aspect ratio */
+            background-color: black;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Video controls */
+        .video-controls {
+            position: absolute;
+            right: 20px;
+            bottom: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .control-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .control-button i {
+            font-size: 20px;
+        }
+
+        .likes-count, .comments-count {
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Video info */
+        .video-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 60px;
+            color: white;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .channel-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #666;
+            margin-right: 10px;
+            overflow: hidden;
+        }
+
+        .channel-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .subscribe-button {
+            background-color: white;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        .video-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Timer */
+        .video-timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* File input styling */
+        .file-input-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        .file-input-button {
+            display: inline-block;
+            background-color: #f00;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #videoDirectory {
+            display: none;
+        }
+
+        /* Hide scrollbar but allow scrolling */
+        .shorts-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .shorts-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Down arrow for navigation hint */
+        .down-arrow {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .down-arrow i {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fab fa-youtube"></i> LocalTube
+            </div>
+            <div class="sidebar-items">
+                <div class="sidebar-item active">
+                    <i class="fas fa-home"></i> Home
+                </div>
+                <div class="sidebar-item selected">
+                    <i class="fas fa-film"></i> Shorts
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-subscription"></i> Subscriptions
+                </div>
+                <div class="sidebar-header">You</div>
+                <div class="sidebar-item">
+                    <i class="fas fa-history"></i> History
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-list"></i> Playlists
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-video"></i> Your videos
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-graduation-cap"></i> Your courses
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-clock"></i> Watch Later
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-thumbs-up"></i> Liked videos
+                </div>
+                <div class="sidebar-item">
+                    <i class="fas fa-scissors"></i> Your clips
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Video container -->
+            <div class="shorts-container">
+                <!-- Videos will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- File input for selecting local videos -->
+    <div class="file-input-container">
+        <label for="videoDirectory" class="file-input-button">Select Video Folder</label>
+        <input type="file" id="videoDirectory" webkitdirectory directory multiple accept="video/*">
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const shortsContainer = document.querySelector('.shorts-container');
+            const fileInput = document.getElementById('videoDirectory');
+            
+            // Array to store video files
+            let videoFiles = [];
+            
+            // Event listener for file input
+            fileInput.addEventListener('change', function(e) {
+                videoFiles = [];
+                
+                // Get all video files from the selected directory
+                for (let i = 0; i < this.files.length; i++) {
+                    const file = this.files[i];
+                    if (file.type.startsWith('video/')) {
+                        videoFiles.push(file);
+                    }
+                }
+                
+                // Clear the existing shorts
+                shortsContainer.innerHTML = '';
+                
+                // Create shorts for each video file
+                videoFiles.forEach((file, index) => {
+                    createShort(file, index);
+                });
+                
+                // Add event listeners for video playback
+                setupVideoPlayback();
+            });
+            
+            // Function to create a short for a video file
+            function createShort(file, index) {
+                const objectURL = URL.createObjectURL(file);
+                
+                const shortDiv = document.createElement('div');
+                shortDiv.className = 'short';
+                shortDiv.innerHTML = `
+                    <div class="video-container">
+                        <video src="${objectURL}" loop>
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-timer">00:00 / 00:00</div>
+                    </div>
+                    <div class="video-controls">
+                        <div class="control-button like-button">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="likes-count">0</div>
+                        <div class="control-button dislike-button">
+                            <i class="fas fa-thumbs-down"></i>
+                        </div>
+                        <div class="control-button comment-button">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="comments-count">0</div>
+                        <div class="control-button share-button">
+                            <i class="fas fa-share"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <div class="channel-info">
+                            <div class="channel-avatar">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Ccircle fill='%23666' cx='18' cy='18' r='18'/%3E%3C/svg%3E" alt="Channel">
+                            </div>
+                            <div class="channel-name">@local_${index + 1}</div>
+                            <div class="subscribe-button">Subscribe</div>
+                        </div>
+                        <div class="video-title">${file.name}</div>
+                    </div>
+                `;
+                
+                shortsContainer.appendChild(shortDiv);
+            }
+            
+            // Function to setup video playback behavior
+            function setupVideoPlayback() {
+                const videos = document.querySelectorAll('.short video');
+                const shorts = document.querySelectorAll('.short');
+                
+                // Pause all videos initially
+                videos.forEach(video => {
+                    video.pause();
+                    
+                    // Update video timer
+                    video.addEventListener('timeupdate', function() {
+                        const timer = this.closest('.short').querySelector('.video-timer');
+                        const currentTime = formatTime(this.currentTime);
+                        const duration = formatTime(this.duration);
+                        timer.textContent = `${currentTime} / ${duration}`;
+                    });
+                    
+                    // Reset timer when video loaded
+                    video.addEventListener('loadedmetadata', function() {
+                        const timer = this.closest('.short').querySelector('.video-timer');
+                        const duration = formatTime(this.duration);
+                        timer.textContent = `00:00 / ${duration}`;
+                    });
+                    
+                    // Toggle play/pause on click
+                    video.addEventListener('click', function() {
+                        if (this.paused) {
+                            this.play();
+                        } else {
+                            this.pause();
+                        }
+                    });
+                });
+                
+                // Intersection Observer to play/pause videos when they enter/exit viewport
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const video = entry.target.querySelector('video');
+                        
+                        if (entry.isIntersecting) {
+                            // Play video when in view
+                            video.play();
+                            
+                            // Generate random likes and comments for demo
+                            const likesCount = entry.target.querySelector('.likes-count');
+                            const commentsCount = entry.target.querySelector('.comments-count');
+                            
+                            const randomLikes = Math.floor(Math.random() * 1000);
+                            const randomComments = Math.floor(Math.random() * 100);
+                            
+                            likesCount.textContent = randomLikes;
+                            commentsCount.textContent = randomComments;
+                        } else {
+                            // Pause when out of view
+                            video.pause();
+                            
+                            // Reset to beginning for when it comes back in view
+                            video.currentTime = 0;
+                        }
+                    });
+                }, { threshold: 0.7 }); // 70% of the element must be visible
+                
+                shorts.forEach(short => {
+                    observer.observe(short);
+                });
+                
+                // Add scroll event to make sure only the currently visible video plays
+                shortsContainer.addEventListener('scroll', debounce(function() {
+                    shorts.forEach(short => {
+                        const rect = short.getBoundingClientRect();
+                        const video = short.querySelector('video');
+                        
+                        // If short is mostly visible in viewport
+                        if (rect.top >= -rect.height / 2 && rect.bottom <= window.innerHeight + rect.height / 2) {
+                            video.play();
+                        } else {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    });
+                }, 100));
+            }
+            
+            // Helper function to format time (seconds -> MM:SS)
+            function formatTime(seconds) {
+                if (isNaN(seconds)) return "00:00";
+                
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            // Debounce function to limit how often a function is called
+            function debounce(func, wait) {
+                let timeout;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+            
+            // Add a down arrow for navigation hint
+            const downArrow = document.createElement('div');
+            downArrow.className = 'down-arrow';
+            downArrow.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            document.body.appendChild(downArrow);
+            
+            downArrow.addEventListener('click', function() {
+                const shorts = document.querySelectorAll('.short');
+                if (shorts.length > 0) {
+                    // Find the next short to scroll to
+                    for (let i = 0; i < shorts.length; i++) {
+                        const rect = shorts[i].getBoundingClientRect();
+                        if (rect.top > 50) {  // if short is below viewport top
+                            shorts[i].scrollIntoView({ behavior: 'smooth' });
+                            return;
+                        }
+                    }
+                    // If we're at the last short, loop back to the first one
+                    shorts[0].scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
