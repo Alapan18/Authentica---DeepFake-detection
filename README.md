@@ -1,3 +1,6 @@
+### Under MODIFICATION
+
+
 # 🛡️ Authentica Deepfake Detection System  
 
 A **multimodal deepfake detection system** leveraging **CNN-LSTM for video analysis** and **SVM-based classification for audio detection**. The project includes training, prediction, and a web-based interface for  deepfake detection.  
